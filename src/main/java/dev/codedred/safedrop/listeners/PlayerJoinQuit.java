@@ -9,21 +9,25 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerJoinQuit implements Listener {
 
+    private static final String HEAD = "saves.";
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        DataManager manager = DataManager.getInstance();
-        boolean status = manager.getSaves().contains("saves." + event.getPlayer().getUniqueId())
-                && manager.getSaves().getBoolean("saves." + event.getPlayer().getUniqueId());
+        DataManager dataManager = DataManager.getInstance();
+        boolean status = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId())
+                && dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId());
 
-        DropManager.getInstance().addDropStatus(event.getPlayer().getUniqueId(), status);
+        DropManager dropManager = DropManager.getInstance();
+        dropManager.addDropStatus(event.getPlayer().getUniqueId(), status);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        DataManager dataManager = DataManager.getInstance();
         DropManager dropManager = DropManager.getInstance();
-        DataManager.getInstance().getSaves().set("saves." + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
-        DataManager.getInstance().saveSaves();
+        dataManager.getSaves().set(HEAD + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
+        dataManager.saveSaves();
 
-        DropManager.getInstance().removeDropStatus(event.getPlayer().getUniqueId());
+        dropManager.removeDropStatus(event.getPlayer().getUniqueId());
     }
 }

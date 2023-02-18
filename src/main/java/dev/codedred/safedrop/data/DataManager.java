@@ -3,6 +3,7 @@ package dev.codedred.safedrop.data;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dev.codedred.safedrop.SafeDrop;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class DataManager {
 
@@ -14,8 +15,8 @@ public class DataManager {
 		return instance;
 	}
 	
-	private final CustomFile config = new CustomFile(SafeDrop.getPlugin(SafeDrop.class), "config.yml");
-	private final CustomFile saves = new CustomFile(SafeDrop.getPlugin(SafeDrop.class), "saves.yml");
+	private final CustomFile config = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "config.yml");
+	private final CustomFile saves = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "saves.yml");
 	
 	public FileConfiguration getConfig() {
 		return config.getConfig();

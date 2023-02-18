@@ -14,11 +14,14 @@ public class PlayerJoinQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         DataManager dataManager = DataManager.getInstance();
-        boolean status = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId())
-                && dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId());
-
         DropManager dropManager = DropManager.getInstance();
-        dropManager.addDropStatus(event.getPlayer().getUniqueId(), status);
+
+        boolean exists = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId());
+        if (exists)
+            dropManager.addDropStatus(event.getPlayer().getUniqueId(),
+                    dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId()));
+        else
+            dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
     }
 
     @EventHandler

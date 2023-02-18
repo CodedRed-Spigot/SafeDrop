@@ -1,0 +1,13 @@
+name: SafeDrop
+version: '${version}'
+main: dev.codedred.safedrop.SafeDrop
+api-version: 1.19
+authors: [ CodedRed ]
+description: Confirm drops before dropping items!
+website: www.codedred.dev
+
+commands:
+  safedrop:
+    aliases: [ sd ]
+    description: "Enable/Disable the safedrop feature."
+    usage: "/sd on/off"

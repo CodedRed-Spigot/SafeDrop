@@ -9,7 +9,12 @@ import java.util.regex.Pattern;
 
 public class ChatUtil {
 
-    private static final Pattern hexPattern = Pattern.compile("<#([A-Fa-f0-9]){6}>");
+    private static final Pattern HEX_PATTERN = Pattern.compile("<#([A-Fa-f0-9]){6}>");
+    private static final Method MATCH_MATERIAL_METHOD = getMatchMaterialMethod();
+
+    private ChatUtil() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static String format(String msg) {
         msg = ChatColor.translateAlternateColorCodes('&', msg);
@@ -19,24 +24,26 @@ public class ChatUtil {
     }
 
     private static String hex(String message){
-        Matcher matcher = hexPattern.matcher(message);
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        StringBuilder builder = new StringBuilder(message);
         while (matcher.find()) {
             ChatColor hexColor = ChatColor.of(matcher.group().substring(1, matcher.group().length() - 1));
-            String before = message.substring(0, matcher.start());
-            String after = message.substring(matcher.end());
-            message = before + hexColor + after;
-            matcher = hexPattern.matcher(message);
+            builder.replace(matcher.start(), matcher.end(), hexColor.toString());
+            matcher.reset(builder.toString());
         }
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return ChatColor.translateAlternateColorCodes('&', builder.toString());
     }
 
     private static boolean isNewerVersion() {
+        return MATCH_MATERIAL_METHOD != null;
+    }
+
+    private static Method getMatchMaterialMethod() {
         try {
             Class<?> class_Material = Material.class;
-            Method method = class_Material.getDeclaredMethod("matchMaterial", String.class, Boolean.TYPE);
-            return (method != null);
+            return class_Material.getDeclaredMethod("matchMaterial", String.class, Boolean.TYPE);
         } catch(ReflectiveOperationException ex) {
-            return false;
+            return null;
         }
     }
 }

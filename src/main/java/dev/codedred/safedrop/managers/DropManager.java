@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class DropManager {
 
@@ -58,18 +57,12 @@ public class DropManager {
 	private void startRequestDelay(UUID uuid) {
 		DataManager dataManager = DataManager.getInstance();
 		new BukkitRunnable() {
-			int count = 0;
-			final long end = TimeUnit.SECONDS.toMillis(dataManager.getConfig().getLong("safe-drop.seconds")) - TimeUnit.SECONDS.toMillis(15L);
-
 			@Override
 			public void run() {
-				if (count >= end / 1000L) {
-					if (hasRequested(uuid))
-						removeRequest(uuid);
-					cancel();
-				}
-				count++;
+				if (hasRequested(uuid))
+					removeRequest(uuid);
+				cancel();
 			}
-		}.runTaskAsynchronously(JavaPlugin.getPlugin(SafeDrop.class));
+		}.runTaskLaterAsynchronously(JavaPlugin.getPlugin(SafeDrop.class),dataManager.getConfig().getLong("safe-drop.seconds") * 20L - 15L);
 	}
 }

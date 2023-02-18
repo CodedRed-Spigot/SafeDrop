@@ -24,10 +24,8 @@ public class PlayerDropItem implements Listener {
 		UUID uuid = event.getPlayer().getUniqueId();
 
 		// already tried to drop item, this is them confirming it.
-		if (dropManager.hasRequested(uuid)) {
-			dropManager.removeRequest(uuid);
+		if (dropManager.hasRequested(uuid))
 			return;
-		}
 
 		// send confirm message if safe drop is enabled.
 		if (dropManager.getStatus(uuid)) {

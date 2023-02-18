@@ -1,8 +1,11 @@
 package dev.codedred.safedrop;
 
 import dev.codedred.safedrop.commands.Drop;
+import dev.codedred.safedrop.data.DataManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
+import dev.codedred.safedrop.managers.DropManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +22,14 @@ public final class SafeDrop extends JavaPlugin {
         registerCommands();
         registerListeners();
 
+        // Handle player status if server is being live reloaded
+        if (!getServer().getOnlinePlayers().isEmpty()) {
+            DataManager dataManager = DataManager.getInstance();
+            DropManager dropManager = DropManager.getInstance();
+            for (Player player : getServer().getOnlinePlayers())
+                dropManager.addDropStatus(player.getUniqueId(), dataManager.getSaves().contains("saves." + player.getUniqueId())
+                        && dataManager.getSaves().getBoolean("saves." + player.getUniqueId()));
+        }
     }
 
     @Override
@@ -35,6 +46,8 @@ public final class SafeDrop extends JavaPlugin {
         pm.registerEvents(new PlayerDropItem(), this);
         pm.registerEvents(new PlayerJoinQuit(), this);
     }
+
+
     private void checkForUpdate() {
         getServer().getScheduler().runTaskAsynchronously(this, () -> {
             UpdateChecker updater = new UpdateChecker(this, 72585);

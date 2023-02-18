@@ -21,7 +21,7 @@ For admins, the /safedrop reload command can be used to reload the SafeDrop conf
 The SafeDrop configuration file can be found at plugins/SafeDrop/config.yml. The file can be edited to customize SafeDrop's messages and settings.
 
 ## Credits
-SafeDrop was developed by [CodedRed](https://github.com/CodedRedGIT) and is licensed under the [MIT License](https://github.com/CodedRed-Spigot/SafeDrop/blob/master/LICENSE).
+SafeDrop was developed by [CodedRed](https://github.com/CodedRed-Spigot/SafeDrop/blob/master/License).
 
 ## Support
 For support or assistance with SafeDrop, please contact the developer on the SpigotMC page or by creating an [issue](https://github.com/CodedRed-Spigot/SafeDrop/issues) on the GitHub repository.

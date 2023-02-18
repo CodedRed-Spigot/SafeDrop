@@ -2,7 +2,7 @@
 SafeDrop is a Spigot plugin that allows players to safely drop items while protecting their inventory from accidental item drops.
 
 ## Features
-* SafeDrop only allows players to drop items if they confirm the action, preventing accidental item drops.
+* SafeDrop allows players to drop items if they confirm the action, preventing accidental item drops.
 * Admins can enable or disable SafeDrop for individual players or for the entire server.
 * Players can turn SafeDrop on or off themselves.
 * SafeDrop is fully customizable with text and action bar messages.

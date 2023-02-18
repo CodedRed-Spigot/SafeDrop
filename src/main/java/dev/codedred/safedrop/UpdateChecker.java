@@ -3,10 +3,12 @@ package dev.codedred.safedrop;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
+
 public class UpdateChecker {
 
     private URL checkURL;
@@ -17,30 +19,24 @@ public class UpdateChecker {
         this.plugin = plugin;
         newVersion = plugin.getDescription().getVersion();
         try {
-            checkURL = new URL(
-                    "https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
+            checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
         } catch (MalformedURLException e) {
-            //e.printStackTrace();
+            plugin.getLogger().warning("[SafeDrop] Could not connect to spigotmc.org to check for update!");
         }
     }
 
-    /*public int getProjectID() {
-        return project;
-    }
-    public JavaPlugin getPlugin() {
-        return plugin;
-    }
-    public String getLatestVersion() {
-        return newVersion;
-    }
-    public String getResourceURL() {
-        return "https://www.spigotmc.org/resources/" + project;
-    }*/
+    public boolean checkForUpdates() throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) checkURL.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        connection.setDoOutput(true);
 
-    public boolean checkForUpdates() throws Exception {
-        URLConnection con = checkURL.openConnection();
-        newVersion = new BufferedReader(new InputStreamReader(con.getInputStream()))
+        newVersion = new BufferedReader(new InputStreamReader(connection.getInputStream()))
                 .readLine();
+
+        connection.disconnect();
+
         return !plugin.getDescription().getVersion().equals(newVersion);
     }
 }

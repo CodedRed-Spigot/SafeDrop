@@ -12,6 +12,7 @@ public final class SafeDrop extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getLogger().info("SafeDrop is enabling");
         checkForUpdate();
 
 
@@ -22,6 +23,7 @@ public final class SafeDrop extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        getLogger().info("SafeDrop is disabling");
     }
 
     private void registerCommands() {
@@ -34,21 +36,23 @@ public final class SafeDrop extends JavaPlugin {
         pm.registerEvents(new PlayerJoinQuit(), this);
     }
     private void checkForUpdate() {
-        UpdateChecker updater = new UpdateChecker(this, 72585);
-        try {
-            if (updater.checkForUpdates()) {
-                getServer().getLogger().info("=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-                getServer().getLogger().warning("You are using an older version of SafeDrop!");
-                getServer().getLogger().info("Download the newest version here:");
-                getServer().getLogger().info("https://www.spigotmc.org/resources/72585/");
-                getServer().getLogger().info("=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-            } else {
-                getServer().getLogger().info("[SafeDrop] Plugin is up to date! - "
-                        + getDescription().getVersion());
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            UpdateChecker updater = new UpdateChecker(this, 72585);
+            try {
+                if (updater.checkForUpdates()) {
+                    getLogger().info("=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                    getLogger().warning("You are using an older version of SafeDrop!");
+                    getLogger().info("Download the newest version here:");
+                    getLogger().info("https://www.spigotmc.org/resources/72585/");
+                    getLogger().info("=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                } else {
+                    getLogger().info("[SafeDrop] Plugin is up to date! - "
+                            + getDescription().getVersion());
+                }
+            } catch (Exception e) {
+                getLogger().info("[SafeDrop] Could not check for updates!");
             }
-        } catch (Exception e) {
-            getServer().getLogger().info("[SafeDrop] Could not check for updates!");
-        }
+        });
     }
 
 }

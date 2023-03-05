@@ -19,6 +19,9 @@ public class PlayerDropItem implements Listener {
 		if (!event.getPlayer().hasPermission("sd.use"))
 			return;
 
+		if (event.getPlayer().getInventory().firstEmpty() == -1)
+			return;
+
 		DropManager dropManager = DropManager.getInstance();
 		DataManager dataManager = DataManager.getInstance();
 		UUID uuid = event.getPlayer().getUniqueId();

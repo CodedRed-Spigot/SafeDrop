@@ -11,3 +11,6 @@ commands:
     aliases: [ sd ]
     description: "Enable/Disable the safedrop feature."
     usage: "/sd on/off"
+  droptoggle:
+    aliases: [ drop ]
+    description: "Enable/Disable the safedrop feature."

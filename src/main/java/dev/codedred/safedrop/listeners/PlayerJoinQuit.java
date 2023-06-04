@@ -28,9 +28,18 @@ public class PlayerJoinQuit implements Listener {
         val usersTable = plugin.getDatabaseManager().getUsersTable();
         User user = usersTable.getByUuid(uniqueId);
 
-        if (user == null) {
-            User newUser = new User(event.getPlayer().getUniqueId(), true);
-            usersTable.insert(newUser);
+        if (dataManager.getConfig().getBoolean("MySQL")) {
+
+            if (user == null) {
+                User newUser = new User(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
+                usersTable.insert(newUser);
+                return false;
+            }
+
+            if (user.isEnabled()) {
+                dropManager.addDropStatus(event.getPlayer().getUniqueId(), user.isEnabled());
+            }
+            return false;
         }
 
         boolean exists = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId());
@@ -47,8 +56,13 @@ public class PlayerJoinQuit implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         DataManager dataManager = DataManager.getInstance();
         DropManager dropManager = DropManager.getInstance();
-        dataManager.getSaves().set(HEAD + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
-        dataManager.saveSaves();
+
+        if (!dataManager.getConfig().getBoolean("MySQL")) {
+
+            dataManager.getSaves().set(HEAD + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
+            dataManager.saveSaves();
+
+        }
 
         dropManager.removeDropStatus(event.getPlayer().getUniqueId());
     }

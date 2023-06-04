@@ -1,3 +1,10 @@
+database-settings:
+  host: ''
+  port:
+  user: ''
+  password: ''
+  database: ''
+
 safe-drop:
   enabled: true
   seconds: 10
@@ -13,5 +20,4 @@ messages:
   safedrop-on: '&aSafeDrop has been enabled!'
   usage:
     - '&9&lTry,'
-    - '&9/&8Safedrop off &7- Turns off safedrop'
-    - '&9/&8Safedrop on &7- Turns on safedrop'
+    - '&9/&8Safedrop &7- Turns on/off safedrop'

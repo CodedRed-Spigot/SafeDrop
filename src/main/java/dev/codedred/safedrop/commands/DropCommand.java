@@ -2,7 +2,6 @@ package dev.codedred.safedrop.commands;
 
 import dev.codedred.safedrop.SafeDrop;
 import dev.codedred.safedrop.data.DataManager;
-import dev.codedred.safedrop.managers.DropManager;
 import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.chat.ChatUtils;
 import lombok.val;
@@ -15,7 +14,7 @@ public class DropCommand implements CommandExecutor {
 
     private static final String PERMISSION_USE = "sd.use";
 
-    private SafeDrop plugin;
+    private final SafeDrop plugin;
 
     public DropCommand(SafeDrop plugin) {
         this.plugin = plugin;
@@ -57,20 +56,6 @@ public class DropCommand implements CommandExecutor {
 
         return false;
 
-/*        if (!dropManager.getStatus(player.getUniqueId())) {
-            dropManager.addDropStatus(player.getUniqueId(), true);
-            player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-on")));
-            return false;
-        } else
-            sendError(player);
-
-        if (dropManager.getStatus(player.getUniqueId())) {
-            dropManager.addDropStatus(player.getUniqueId(), false);
-            player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-off")));
-            return false;
-
-        } else
-            sendError(player);*/
     }
 
 }

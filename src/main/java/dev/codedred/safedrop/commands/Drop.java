@@ -1,8 +1,10 @@
 package dev.codedred.safedrop.commands;
 
+import dev.codedred.safedrop.SafeDrop;
 import dev.codedred.safedrop.data.DataManager;
-import dev.codedred.safedrop.managers.DropManager;
+import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.chat.ChatUtils;
+import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,12 @@ public class Drop implements CommandExecutor {
 
     private static final String PERMISSION_USE = "sd.use";
     private static final String PERMISSION_ADMIN = "sd.admin";
+
+    private final SafeDrop plugin;
+
+    public Drop(SafeDrop plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -26,8 +34,29 @@ public class Drop implements CommandExecutor {
             return false;
         }
 
-        DropManager dropManager = DropManager.getInstance();
+        val uniqueId = player.getUniqueId();
+
+        val usersTable = plugin.getDatabaseManager().getUsersTable();
+
+        User user = usersTable.getByUuid(uniqueId);
+
         switch (args[0].toUpperCase()) {
+            case "ON" -> {
+                if (player.hasPermission(PERMISSION_USE)) {
+                    user.setEnabled(true);
+                    usersTable.update(user);
+                    player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-on")));
+                } else
+                    sendError(player);
+            }
+            case "OFF" -> {
+                if (player.hasPermission(PERMISSION_USE)) {
+                    user.setEnabled(false);
+                    usersTable.update(user);
+                    player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-off")));
+                } else
+                    sendError(player);
+            }
             case "RELOAD" -> {
                 if (player.hasPermission(PERMISSION_ADMIN)) {
                     dataManager.reload();

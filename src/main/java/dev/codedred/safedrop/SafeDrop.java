@@ -42,7 +42,7 @@ public final class SafeDrop extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("safedrop")).setExecutor(new Drop());
+        Objects.requireNonNull(getCommand("safedrop")).setExecutor(new Drop(this));
         Objects.requireNonNull(getCommand("droptoggle")).setExecutor(new DropCommand(this));
     }
 

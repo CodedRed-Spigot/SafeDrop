@@ -32,9 +32,7 @@ public class DropCommand implements CommandExecutor {
             return false;
 
         val uniqueId = player.getUniqueId();
-
         val usersTable = plugin.getDatabaseManager().getUsersTable();
-
         User user = usersTable.getByUuid(uniqueId);
 
         if (user == null) {

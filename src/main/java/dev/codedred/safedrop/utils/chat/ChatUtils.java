@@ -1,4 +1,4 @@
-package dev.codedred.safedrop.utils;
+package dev.codedred.safedrop.utils.chat;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -7,12 +7,12 @@ import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChatUtil {
+public class ChatUtils {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("<#([A-Fa-f0-9]){6}>");
     private static final Method MATCH_MATERIAL_METHOD = getMatchMaterialMethod();
 
-    private ChatUtil() {
+    private ChatUtils() {
         throw new IllegalStateException("Utility class");
     }
 

@@ -1,10 +1,13 @@
 package dev.codedred.safedrop;
 
 import dev.codedred.safedrop.commands.Drop;
+import dev.codedred.safedrop.commands.DropCommand;
 import dev.codedred.safedrop.data.DataManager;
+import dev.codedred.safedrop.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
 import dev.codedred.safedrop.managers.DropManager;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,6 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
 
 public final class SafeDrop extends JavaPlugin {
+
+    @Getter
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -22,14 +28,12 @@ public final class SafeDrop extends JavaPlugin {
         registerCommands();
         registerListeners();
 
-        // Handle player status if server is being live reloaded
-        if (!getServer().getOnlinePlayers().isEmpty()) {
-            DataManager dataManager = DataManager.getInstance();
-            DropManager dropManager = DropManager.getInstance();
-            for (Player player : getServer().getOnlinePlayers())
-                dropManager.addDropStatus(player.getUniqueId(), dataManager.getSaves().contains("saves." + player.getUniqueId())
-                        && dataManager.getSaves().getBoolean("saves." + player.getUniqueId()));
-        }
+        this.loadDatabase();
+    }
+
+    private void loadDatabase() {
+        this.databaseManager = new DatabaseManager(this);
+        this.databaseManager.load();
     }
 
     @Override
@@ -38,13 +42,14 @@ public final class SafeDrop extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("safedrop")).setExecutor(new Drop());
+        Objects.requireNonNull(getCommand("safedrop")).setExecutor(new Drop(this));
+        Objects.requireNonNull(getCommand("droptoggle")).setExecutor(new DropCommand(this));
     }
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerDropItem(), this);
-        pm.registerEvents(new PlayerJoinQuit(), this);
+        pm.registerEvents(new PlayerDropItem(this), this);
+        pm.registerEvents(new PlayerJoinQuit(this), this);
     }
 
 

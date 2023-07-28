@@ -1,7 +1,7 @@
-package dev.codedred.safedrop.database.datasource.impl;
+package dev.codedred.safedrop.data.database.datasource.impl;
 
 import dev.codedred.safedrop.SafeDrop;
-import dev.codedred.safedrop.database.datasource.DataSource;
+import dev.codedred.safedrop.data.database.datasource.DataSource;
 import lombok.val;
 
 import java.sql.Connection;
@@ -22,7 +22,6 @@ public class MySQL implements DataSource {
         val password = databaseSettingsSection.getString("password");
         val database = databaseSettingsSection.getString("database");
 
-        // val url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
         val connectionUrl = String.format("jdbc:mysql://%s:%s/%s?autoReconnect=true", host, port, database);
 
         try {
@@ -35,13 +34,13 @@ public class MySQL implements DataSource {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() {
         return connection;
     }
 
     @Override
-    public void closeConnection() {
-        // Not used
+    public void closeConnection() throws SQLException {
+        connection.close();
     }
 
 }

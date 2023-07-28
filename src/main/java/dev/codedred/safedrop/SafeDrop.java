@@ -2,13 +2,10 @@ package dev.codedred.safedrop;
 
 import dev.codedred.safedrop.commands.Drop;
 import dev.codedred.safedrop.commands.DropCommand;
-import dev.codedred.safedrop.data.DataManager;
-import dev.codedred.safedrop.database.manager.DatabaseManager;
+import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
-import dev.codedred.safedrop.managers.DropManager;
 import lombok.Getter;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -1,11 +1,10 @@
-package dev.codedred.safedrop.database.manager;
+package dev.codedred.safedrop.data.database.manager;
 
 import dev.codedred.safedrop.SafeDrop;
-import dev.codedred.safedrop.database.datasource.DataSource;
-import dev.codedred.safedrop.database.datasource.impl.MySQL;
-import dev.codedred.safedrop.database.table.UsersTable;
+import dev.codedred.safedrop.data.database.table.UsersTable;
+import dev.codedred.safedrop.data.database.datasource.DataSource;
+import dev.codedred.safedrop.data.database.datasource.impl.MySQL;
 import lombok.Getter;
-import lombok.val;
 
 @Getter
 public class DatabaseManager {

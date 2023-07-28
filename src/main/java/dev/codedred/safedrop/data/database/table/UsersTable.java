@@ -1,17 +1,16 @@
-package dev.codedred.safedrop.database.table;
+package dev.codedred.safedrop.data.database.table;
 
-import dev.codedred.safedrop.database.datasource.DataSource;
+import dev.codedred.safedrop.data.database.datasource.DataSource;
 import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.async.Async;
 import lombok.val;
 
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 public class UsersTable {
 
-    private static final String TABLE_NAME = "revosafedrop_users";
+    private static final String TABLE_NAME = "safedrop_users";
 
     private final DataSource dataSource;
 
@@ -29,8 +28,8 @@ public class UsersTable {
         }
     }
 
-    public CompletableFuture<Void> insert(User user) {
-        return Async.run(() -> {
+    public void insert(User user) {
+        Async.run(() -> {
             try (val preparedStatement = dataSource.getConnection().prepareStatement(String.format("INSERT INTO `%s` " +
                     "(`uniqueId`, `enabled`) VALUES (?, ?)", TABLE_NAME))) {
                 preparedStatement.setString(1, user.getUniqueId().toString());
@@ -43,8 +42,8 @@ public class UsersTable {
         });
     }
 
-    public CompletableFuture<Void> update(User user) {
-        return Async.run(() -> {
+    public void update(User user) {
+        Async.run(() -> {
             try (val preparedStatement = dataSource.getConnection().prepareStatement(String.format("UPDATE `%s` " +
                     " SET `enabled` = ? WHERE `uniqueId` = ?", TABLE_NAME))) {
                 preparedStatement.setBoolean(1, user.isEnabled());

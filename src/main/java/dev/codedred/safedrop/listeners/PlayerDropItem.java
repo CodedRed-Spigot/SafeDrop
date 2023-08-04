@@ -32,25 +32,31 @@ public class PlayerDropItem implements Listener {
 		DataManager dataManager = DataManager.getInstance();
 		UUID uuid = event.getPlayer().getUniqueId();
 
-		// already tried to drop item, this is them confirming it.
 		if (dropManager.hasRequested(uuid))
 			return;
 
-		// send confirm message if safe drop is enabled.
-		if (plugin.getDatabaseManager().getUsersTable().getByUuid(event.getPlayer().getUniqueId()).isEnabled()) {
-			dropManager.addRequest(uuid);
-
+		if (dataManager.getConfig().getBoolean("database-settings.enabled")
+				&& plugin.getDatabaseManager().getUsersTable().getByUuid(event.getPlayer().getUniqueId()).isEnabled()) {
 			event.setCancelled(true);
-			Player player = event.getPlayer();
+			handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
+		}
 
-			if (dataManager.getConfig().getBoolean("safe-drop.text-message.enabled"))
-				player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.drop-text-message")));
-
-			if (dataManager.getConfig().getBoolean("safe-drop.actionbar-message.enabled")) {
-				TextComponent message = new TextComponent(ChatUtils.format(dataManager.getConfig().getString("messages.drop-actionbar-message")));
-				player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
-			}
+		if (dropManager.getStatus(uuid)) {
+			event.setCancelled(true);
+			handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
 		}
 	}
 
+	private void handlePlayerDrop(Player player, UUID uuid, DataManager dataManager, DropManager dropManager) {
+		dropManager.addRequest(uuid);
+
+		if (dataManager.getConfig().getBoolean("safe-drop.text-message.enabled")) {
+			player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.drop-text-message")));
+		}
+
+		if (dataManager.getConfig().getBoolean("safe-drop.actionbar-message.enabled")) {
+			TextComponent message = new TextComponent(ChatUtils.format(dataManager.getConfig().getString("messages.drop-actionbar-message")));
+			player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+		}
+	}
 }

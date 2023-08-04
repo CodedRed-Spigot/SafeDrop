@@ -2,6 +2,7 @@ package dev.codedred.safedrop;
 
 import dev.codedred.safedrop.commands.Drop;
 import dev.codedred.safedrop.commands.DropCommand;
+import dev.codedred.safedrop.data.DataManager;
 import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
@@ -29,8 +30,10 @@ public final class SafeDrop extends JavaPlugin {
     }
 
     private void loadDatabase() {
-        this.databaseManager = new DatabaseManager(this);
-        this.databaseManager.load();
+        if (DataManager.getInstance().getConfig().getBoolean("database-settings.enabled")) {
+            this.databaseManager = new DatabaseManager(this);
+            this.databaseManager.load();
+        }
     }
 
     @Override

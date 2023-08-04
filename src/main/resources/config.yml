@@ -1,11 +1,3 @@
-MySQL: false
-database-settings:
-  host: ''
-  port:
-  user: ''
-  password: ''
-  database: ''
-
 safe-drop:
   enabled: true
   seconds: 10
@@ -13,6 +5,13 @@ safe-drop:
     enabled: true
   actionbar-message:
     enabled: true
+database-settings:
+  enabled: false
+  host: ''
+  port:
+  user: ''
+  password: ''
+  database: ''
 messages:
   no-permission: '&cYou do not have permission to do this!'
   drop-text-message: '&9Confirm drop by dropping item again!'

@@ -2,6 +2,8 @@ package dev.codedred.safedrop.commands;
 
 import dev.codedred.safedrop.SafeDrop;
 import dev.codedred.safedrop.data.DataManager;
+import dev.codedred.safedrop.data.database.table.UsersTable;
+import dev.codedred.safedrop.managers.DropManager;
 import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.chat.ChatUtils;
 import lombok.val;
@@ -9,6 +11,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class Drop implements CommandExecutor {
 
@@ -34,29 +38,66 @@ public class Drop implements CommandExecutor {
             return false;
         }
 
+        if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
+            handleDatabaseEnabledCommand(player, args);
+        } else {
+            handleDatabaseDisabledCommand(player, args);
+        }
+
+        return true;
+    }
+
+    private void handleDatabaseEnabledCommand(Player player, String[] args) {
         val uniqueId = player.getUniqueId();
-
         val usersTable = plugin.getDatabaseManager().getUsersTable();
-
         User user = usersTable.getByUuid(uniqueId);
 
+        if (!player.hasPermission(PERMISSION_USE)) {
+            sendError(player);
+            return;
+        }
+
         switch (args[0].toUpperCase()) {
-            case "ON" -> {
-                if (player.hasPermission(PERMISSION_USE)) {
-                    user.setEnabled(true);
-                    usersTable.update(user);
-                    player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-on")));
-                } else
-                    sendError(player);
-            }
-            case "OFF" -> {
-                if (player.hasPermission(PERMISSION_USE)) {
-                    user.setEnabled(false);
-                    usersTable.update(user);
-                    player.sendMessage(ChatUtils.format(dataManager.getConfig().getString("messages.safedrop-off")));
-                } else
-                    sendError(player);
-            }
+            case "ON" -> updateUserStatus(user, usersTable, true, "messages.safedrop-on", player);
+            case "OFF" -> updateUserStatus(user, usersTable, false, "messages.safedrop-off", player);
+            default -> handleCommonCommand(player, args);
+        }
+    }
+
+    private void handleDatabaseDisabledCommand(Player player, String[] args) {
+        DropManager dropManager = DropManager.getInstance();
+
+        if (!player.hasPermission(PERMISSION_USE)) {
+            sendError(player);
+            return;
+        }
+
+        switch (args[0].toUpperCase()) {
+            case "ON" -> updateDropStatus(dropManager, player.getUniqueId(), true, "messages.safedrop-on", player);
+            case "OFF" -> updateDropStatus(dropManager, player.getUniqueId(), false, "messages.safedrop-off", player);
+            default -> handleCommonCommand(player, args);
+        }
+    }
+
+    private void updateUserStatus(User user, UsersTable usersTable, boolean status, String messageKey, Player player) {
+        user.setEnabled(status);
+        usersTable.update(user);
+        sendMessageByConfigKey(player, messageKey);
+    }
+
+    private void updateDropStatus(DropManager dropManager, UUID playerId, boolean status, String messageKey, Player player) {
+        dropManager.addDropStatus(playerId, status);
+        sendMessageByConfigKey(player, messageKey);
+    }
+
+    private void sendMessageByConfigKey(Player player, String configKey) {
+        player.sendMessage(ChatUtils.format(DataManager.getInstance().getConfig().getString(configKey)));
+    }
+
+    private void handleCommonCommand(Player player, String[] args) {
+        DataManager dataManager = DataManager.getInstance();
+
+        switch (args[0].toUpperCase()) {
             case "RELOAD" -> {
                 if (player.hasPermission(PERMISSION_ADMIN)) {
                     dataManager.reload();
@@ -72,8 +113,6 @@ public class Drop implements CommandExecutor {
             }
             default -> sendUsage(player);
         }
-
-        return true;
     }
 
     private void sendUsage(Player player) {

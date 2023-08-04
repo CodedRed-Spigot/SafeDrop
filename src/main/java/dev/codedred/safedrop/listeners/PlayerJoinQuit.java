@@ -24,11 +24,10 @@ public class PlayerJoinQuit implements Listener {
         DataManager dataManager = DataManager.getInstance();
         DropManager dropManager = DropManager.getInstance();
 
-        val uniqueId = event.getPlayer().getUniqueId();
-        val usersTable = plugin.getDatabaseManager().getUsersTable();
-        User user = usersTable.getByUuid(uniqueId);
-
-        if (dataManager.getConfig().getBoolean("MySQL")) {
+        if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
+            val uniqueId = event.getPlayer().getUniqueId();
+            val usersTable = plugin.getDatabaseManager().getUsersTable();
+            User user = usersTable.getByUuid(uniqueId);
 
             if (user == null) {
                 User newUser = new User(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
@@ -39,17 +38,15 @@ public class PlayerJoinQuit implements Listener {
             if (user.isEnabled()) {
                 dropManager.addDropStatus(event.getPlayer().getUniqueId(), user.isEnabled());
             }
-            return;
         }
-
-        boolean exists = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId());
-        if (exists)
-            dropManager.addDropStatus(event.getPlayer().getUniqueId(),
-                    dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId()));
-        else
-            dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
-
-        return;
+        else {
+            boolean exists = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId());
+            if (exists)
+                dropManager.addDropStatus(event.getPlayer().getUniqueId(),
+                        dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId()));
+            else
+                dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
+        }
     }
 
     @EventHandler
@@ -57,7 +54,7 @@ public class PlayerJoinQuit implements Listener {
         DataManager dataManager = DataManager.getInstance();
         DropManager dropManager = DropManager.getInstance();
 
-        if (!dataManager.getConfig().getBoolean("MySQL")) {
+        if (!dataManager.getConfig().getBoolean("database-settings.enabled")) {
 
             dataManager.getSaves().set(HEAD + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
             dataManager.saveSaves();

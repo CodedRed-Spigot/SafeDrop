@@ -17,16 +17,6 @@ public class Async {
             false
     );
 
-    public static <T> CompletableFuture<T> run(Callable<T> supplier) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return supplier.call();
-            } catch (Exception exception) {
-                throw new CompletionException(exception);
-            }
-        }, worker);
-    }
-
     public static CompletableFuture<Void> run(Runnable runnable) {
         return CompletableFuture.runAsync(() -> {
             try {

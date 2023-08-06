@@ -30,8 +30,8 @@ public class PlayerJoinQuit implements Listener {
             User user = usersTable.getByUuid(uniqueId);
 
             if (user == null) {
-                User newUser = new User(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
-                usersTable.insert(newUser);
+                user = new User(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
+                usersTable.insert(user);
             }
 
             dropManager.addDropStatus(event.getPlayer().getUniqueId(), user.isEnabled());
@@ -39,10 +39,9 @@ public class PlayerJoinQuit implements Listener {
         else {
             boolean exists = dataManager.getSaves().contains(HEAD + event.getPlayer().getUniqueId());
             if (exists)
-                dropManager.addDropStatus(event.getPlayer().getUniqueId(),
-                        dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId()));
+                dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getSaves().getBoolean(HEAD + event.getPlayer().getUniqueId()));
             else
-                        dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
+                dropManager.addDropStatus(event.getPlayer().getUniqueId(), dataManager.getConfig().getBoolean("safe-drop.enabled"));
         }
     }
 

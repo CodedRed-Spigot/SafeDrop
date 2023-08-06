@@ -2,11 +2,8 @@ package dev.codedred.safedrop.commands;
 
 import dev.codedred.safedrop.SafeDrop;
 import dev.codedred.safedrop.data.DataManager;
-import dev.codedred.safedrop.data.database.table.UsersTable;
 import dev.codedred.safedrop.managers.DropManager;
-import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.chat.ChatUtils;
-import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,14 +26,16 @@ public class Drop implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         DataManager dataManager = DataManager.getInstance();
         if (!(sender instanceof Player player)) {
-            if (args.length != 1 && args[0].equalsIgnoreCase("reload")) {
+            if (args.length >= 1 && args[0].equalsIgnoreCase("reload")) {
                 sender.sendMessage(ChatUtils.format("&dReloading config.."));
+                dataManager.reload();
                 sender.sendMessage(ChatUtils.format("&dChecking for config errors.."));
+                dataManager.checkAndFixConfigKeys();
                 if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
                     sender.sendMessage(ChatUtils.format("&dReloading database.."));
+                    plugin.loadDatabase();
                 }
-                dataManager.reload();
-                sender.sendMessage(ChatUtils.format("\n&d&lSafe Drop &dhas successfully reloaded.\n"));
+                sender.sendMessage(ChatUtils.format("&d&lSafe Drop &dhas successfully reloaded."));
                 return true;
             }
             sender.sendMessage("[SafeDrop] Commands can only be ran in-game!");
@@ -48,30 +47,8 @@ public class Drop implements CommandExecutor {
             return true;
         }
 
-        if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
-            handleDatabaseEnabledCommand(player, args);
-        } else {
-            handleDatabaseDisabledCommand(player, args);
-        }
-
+        handleDatabaseDisabledCommand(player, args);
         return true;
-    }
-
-    private void handleDatabaseEnabledCommand(Player player, String[] args) {
-        val uniqueId = player.getUniqueId();
-        val usersTable = plugin.getDatabaseManager().getUsersTable();
-        User user = usersTable.getByUuid(uniqueId);
-
-        if (!player.hasPermission(PERMISSION_USE)) {
-            sendError(player);
-            return;
-        }
-
-        switch (args[0].toUpperCase()) {
-            case "ON" -> updateUserStatus(user, usersTable, true, "messages.safedrop-on", player);
-            case "OFF" -> updateUserStatus(user, usersTable, false, "messages.safedrop-off", player);
-            default -> handleCommonCommand(player, args);
-        }
     }
 
     private void handleDatabaseDisabledCommand(Player player, String[] args) {
@@ -87,12 +64,6 @@ public class Drop implements CommandExecutor {
             case "OFF" -> updateDropStatus(dropManager, player.getUniqueId(), false, "messages.safedrop-off", player);
             default -> handleCommonCommand(player, args);
         }
-    }
-
-    private void updateUserStatus(User user, UsersTable usersTable, boolean status, String messageKey, Player player) {
-        user.setEnabled(status);
-        usersTable.update(user);
-        sendMessageByConfigKey(player, messageKey);
     }
 
     private void updateDropStatus(DropManager dropManager, UUID playerId, boolean status, String messageKey, Player player) {
@@ -116,7 +87,7 @@ public class Drop implements CommandExecutor {
                         player.sendMessage(ChatUtils.format("&dReloading database.."));
                     }
                     dataManager.reload();
-                    player.sendMessage(ChatUtils.format("\n&d&lSafe Drop &dhas successfully reloaded.\n"));
+                    player.sendMessage(ChatUtils.format("&d&lSafe Drop &dhas successfully reloaded."));
                 } else
                     sendError(player);
             }

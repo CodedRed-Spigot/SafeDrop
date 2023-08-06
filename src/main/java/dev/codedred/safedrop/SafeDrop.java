@@ -29,8 +29,15 @@ public final class SafeDrop extends JavaPlugin {
         this.loadDatabase();
     }
 
-    private void loadDatabase() {
+    public void loadDatabase() {
         if (DataManager.getInstance().getConfig().getBoolean("database-settings.enabled")) {
+            if (this.databaseManager != null && this.databaseManager.getDataSource().getConnection() != null) {
+                try {
+                    this.databaseManager.getDataSource().closeConnection();
+                } catch (Exception e) {
+                    getLogger().warning("Error while trying to close Database connection..");
+                }
+            }
             try {
                 this.databaseManager = new DatabaseManager(this);
             } catch (Exception e) {

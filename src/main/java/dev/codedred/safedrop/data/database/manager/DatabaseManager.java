@@ -38,20 +38,9 @@ public class DatabaseManager {
     }
 
     public void load() {
-        this.usersTable = new UsersTable(dataSource);
-        this.usersTable.createTable();
-    }
-
-    public void reload() {
-        try {
-            if (dataSource != null) {
-                dataSource.closeConnection();
-            }
-
-            setupDataSource();
-            load();
-        } catch (SQLException e) {
-            plugin.getLogger().warning("[SafeDrop] Error while trying to load database!");
+        if (dataSource.getConnection() != null) {
+            this.usersTable = new UsersTable(dataSource);
+            this.usersTable.createTable();
         }
     }
 }

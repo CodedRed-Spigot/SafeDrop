@@ -119,8 +119,6 @@ public class DataManager {
 	public void reload() {
 		config.reloadConfig();
 		saves.reloadConfig();
-		checkAndFixConfigKeys();
-		JavaPlugin.getPlugin(SafeDrop.class).getDatabaseManager().reload();
 	}
 
 	public void saveConfig() {

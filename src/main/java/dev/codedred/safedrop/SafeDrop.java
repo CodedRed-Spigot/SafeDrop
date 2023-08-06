@@ -48,7 +48,7 @@ public final class SafeDrop extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerDropItem(this), this);
+        pm.registerEvents(new PlayerDropItem(), this);
         pm.registerEvents(new PlayerJoinQuit(this), this);
     }
 

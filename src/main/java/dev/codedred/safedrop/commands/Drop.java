@@ -35,7 +35,7 @@ public class Drop implements CommandExecutor {
 
         if (args.length != 1) {
             sendUsage(player);
-            return false;
+            return true;
         }
 
         if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
@@ -107,7 +107,7 @@ public class Drop implements CommandExecutor {
             }
             case "REPORTBUG" -> {
                 if (player.hasPermission(PERMISSION_ADMIN))
-                    player.sendMessage(ChatUtils.format("&9Report issues here: link"));
+                    player.sendMessage(ChatUtils.format("&9Report issues here: \nhttps://github.com/CodedRed-Spigot/SafeDrop/issues"));
                 else
                     sendError(player);
             }
@@ -119,7 +119,7 @@ public class Drop implements CommandExecutor {
         for (String msg : DataManager.getInstance().getConfig().getStringList("messages.usage"))
             player.sendMessage(ChatUtils.format(msg));
         if (player.hasPermission(PERMISSION_ADMIN))
-            player.sendMessage(ChatUtils.format("&c&lAdmin Command:\n&c/&8sd reload &7- reloads plugin\\n&c/&8sd reportbug &7- report a plugin bug"));
+            player.sendMessage(ChatUtils.format("&c&lAdmin Command:\n&c/&8sd reload &7- reloads plugin\n&c/&8sd reportbug &7- report a plugin bug"));
     }
 
     private void sendError(Player player) {

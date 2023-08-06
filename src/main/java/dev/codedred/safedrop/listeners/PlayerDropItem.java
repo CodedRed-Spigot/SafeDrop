@@ -1,6 +1,5 @@
 package dev.codedred.safedrop.listeners;
 
-import dev.codedred.safedrop.SafeDrop;
 import dev.codedred.safedrop.data.DataManager;
 import dev.codedred.safedrop.managers.DropManager;
 import dev.codedred.safedrop.utils.chat.ChatUtils;
@@ -15,11 +14,6 @@ import java.util.UUID;
 
 public class PlayerDropItem implements Listener {
 
-	private final SafeDrop plugin;
-
-	public PlayerDropItem(SafeDrop plugin) {
-		this.plugin = plugin;
-	}
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent event) {
 		if (!event.getPlayer().hasPermission("sd.use"))
@@ -34,12 +28,6 @@ public class PlayerDropItem implements Listener {
 
 		if (dropManager.hasRequested(uuid))
 			return;
-
-		if (dataManager.getConfig().getBoolean("database-settings.enabled")
-				&& plugin.getDatabaseManager().getUsersTable().getByUuid(event.getPlayer().getUniqueId()).isEnabled()) {
-			event.setCancelled(true);
-			handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
-		}
 
 		if (dropManager.getStatus(uuid)) {
 			event.setCancelled(true);

@@ -31,6 +31,7 @@ public class MySQL implements DataSource {
         } catch (SQLException | ClassNotFoundException exception) {
             exception.printStackTrace();
         }
+        System.out.println(getConnection());
     }
 
     @Override

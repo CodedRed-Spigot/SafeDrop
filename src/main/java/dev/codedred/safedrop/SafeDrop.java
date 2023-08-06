@@ -22,7 +22,6 @@ public final class SafeDrop extends JavaPlugin {
         checkForUpdate();
         DataManager.getInstance().checkAndFixConfigKeys();
 
-
         registerCommands();
         registerListeners();
 

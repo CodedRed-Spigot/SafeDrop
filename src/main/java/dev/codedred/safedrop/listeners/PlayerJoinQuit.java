@@ -50,7 +50,7 @@ public class PlayerJoinQuit implements Listener {
         DataManager dataManager = DataManager.getInstance();
         DropManager dropManager = DropManager.getInstance();
 
-        if (!dataManager.getConfig().getBoolean("database-settings.enabled")) {
+        if (!dataManager.getConfig().getBoolean("database-settings.enabled") || (dataManager.getConfig().getBoolean("database-settings.enabled") && plugin.getDatabaseManager().getDataSource().getConnection() == null )) {
             dataManager.getSaves().set(HEAD + event.getPlayer().getUniqueId(), dropManager.getStatus(event.getPlayer().getUniqueId()));
             dataManager.saveSaves();
         }

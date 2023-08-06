@@ -31,7 +31,6 @@ public class MySQL implements DataSource {
             this.connection = DriverManager.getConnection(connectionUrl, user, password);
             plugin.getLogger().info("Successfully connected to database.");
         } catch (SQLException | ClassNotFoundException exception) {
-            exception.printStackTrace();
             plugin.getLogger().severe("ERROR! Database failed to connect. Please check your config.yml and try again.");
         }
     }

@@ -1,7 +1,6 @@
 package dev.codedred.safedrop;
 
 import dev.codedred.safedrop.commands.Drop;
-import dev.codedred.safedrop.commands.DropCommand;
 import dev.codedred.safedrop.data.DataManager;
 import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
@@ -21,6 +20,7 @@ public final class SafeDrop extends JavaPlugin {
     public void onEnable() {
         getLogger().info("SafeDrop is enabling");
         checkForUpdate();
+        DataManager.getInstance().checkAndFixConfigKeys();
 
 
         registerCommands();
@@ -31,19 +31,23 @@ public final class SafeDrop extends JavaPlugin {
 
     private void loadDatabase() {
         if (DataManager.getInstance().getConfig().getBoolean("database-settings.enabled")) {
-            this.databaseManager = new DatabaseManager(this);
+            try {
+                this.databaseManager = new DatabaseManager(this);
+            } catch (Exception e) {
+                getLogger().warning("Disabling SafeDrop...");
+                getServer().getPluginManager().disablePlugin(this);
+            }
             this.databaseManager.load();
         }
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("SafeDrop is disabling");
+        getLogger().info("SafeDrop is disabling..");
     }
 
     private void registerCommands() {
         Objects.requireNonNull(getCommand("safedrop")).setExecutor(new Drop(this));
-        Objects.requireNonNull(getCommand("droptoggle")).setExecutor(new DropCommand(this));
     }
 
     private void registerListeners() {

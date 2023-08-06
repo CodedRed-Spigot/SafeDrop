@@ -1,5 +1,6 @@
 package dev.codedred.safedrop.data;
 
+import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dev.codedred.safedrop.SafeDrop;
@@ -17,8 +18,6 @@ public class DataManager {
 	private DataManager() {
 		config = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "config.yml");
 		saves = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "saves.yml");
-
-		checkAndFixConfigKeys();
 	}
 
 	public static DataManager getInstance() {
@@ -27,36 +26,10 @@ public class DataManager {
 		return instance;
 	}
 
-	private void checkAndFixConfigKeys() {
+	public void checkAndFixConfigKeys() {
 		FileConfiguration cfg = config.getConfig();
 		boolean modified = false;
 
-		if (!cfg.contains("database-settings.enabled")) {
-			cfg.set("database-settings.enabled", false);
-			modified = true;
-		}
-		if (!cfg.contains("database-settings.host")) {
-			cfg.set("database-settings.host", "");
-			modified = true;
-		}
-		if (!cfg.contains("database-settings.port")) {
-			cfg.set("database-settings.port", "");
-			modified = true;
-		}
-		if (!cfg.contains("database-settings.user")) {
-			cfg.set("database-settings.user", "");
-			modified = true;
-		}
-		if (!cfg.contains("database-settings.password")) {
-			cfg.set("database-settings.password", "");
-			modified = true;
-		}
-		if (!cfg.contains("database-settings.database")) {
-			cfg.set("database-settings.database", "");
-			modified = true;
-		}
-
-		// safe-drop and its nested keys
 		if (!cfg.contains("safe-drop.enabled")) {
 			cfg.set("safe-drop.enabled", true);
 			modified = true;
@@ -71,6 +44,35 @@ public class DataManager {
 		}
 		if (!cfg.contains("safe-drop.actionbar-message.enabled")) {
 			cfg.set("safe-drop.actionbar-message.enabled", true);
+			modified = true;
+		}
+
+		if (!cfg.contains("database-settings.enabled")) {
+			cfg.set("database-settings.enabled", false);
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.type")) {
+			cfg.set("database-settings.type", "mysql");
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.host")) {
+			cfg.set("database-settings.host", "localhost");
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.port")) {
+			cfg.set("database-settings.port", 3306);
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.user")) {
+			cfg.set("database-settings.user", "root");
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.password")) {
+			cfg.set("database-settings.password", "password");
+			modified = true;
+		}
+		if (!cfg.contains("database-settings.database")) {
+			cfg.set("database-settings.database", "server1");
 			modified = true;
 		}
 
@@ -102,6 +104,7 @@ public class DataManager {
 
 		if (modified) {
 			saveConfig();
+			JavaPlugin.getPlugin(SafeDrop.class).getLogger().info("[SafeDrop] config.yml was missing some values! Adding them now..");
 		}
 	}
 
@@ -116,6 +119,8 @@ public class DataManager {
 	public void reload() {
 		config.reloadConfig();
 		saves.reloadConfig();
+		checkAndFixConfigKeys();
+		JavaPlugin.getPlugin(SafeDrop.class).getDatabaseManager().reload();
 	}
 
 	public void saveConfig() {

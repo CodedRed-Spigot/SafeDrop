@@ -29,8 +29,18 @@ public class Drop implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         DataManager dataManager = DataManager.getInstance();
         if (!(sender instanceof Player player)) {
+            if (args.length != 1 && args[0].equalsIgnoreCase("reload")) {
+                sender.sendMessage(ChatUtils.format("&dReloading config.."));
+                sender.sendMessage(ChatUtils.format("&dChecking for config errors.."));
+                if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
+                    sender.sendMessage(ChatUtils.format("&dReloading database.."));
+                }
+                dataManager.reload();
+                sender.sendMessage(ChatUtils.format("\n&d&lSafe Drop &dhas successfully reloaded.\n"));
+                return true;
+            }
             sender.sendMessage("[SafeDrop] Commands can only be ran in-game!");
-            return false;
+            return true;
         }
 
         if (args.length != 1) {
@@ -100,6 +110,11 @@ public class Drop implements CommandExecutor {
         switch (args[0].toUpperCase()) {
             case "RELOAD" -> {
                 if (player.hasPermission(PERMISSION_ADMIN)) {
+                    player.sendMessage(ChatUtils.format("&dReloading config.."));
+                    player.sendMessage(ChatUtils.format("&dChecking for config errors.."));
+                    if (dataManager.getConfig().getBoolean("database-settings.enabled")) {
+                        player.sendMessage(ChatUtils.format("&dReloading database.."));
+                    }
                     dataManager.reload();
                     player.sendMessage(ChatUtils.format("\n&d&lSafe Drop &dhas successfully reloaded.\n"));
                 } else

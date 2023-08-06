@@ -1,6 +1,7 @@
 package dev.codedred.safedrop.data.database.table;
 
 import dev.codedred.safedrop.data.database.datasource.DataSource;
+import dev.codedred.safedrop.data.database.datasource.impl.SQLite;
 import dev.codedred.safedrop.model.User;
 import dev.codedred.safedrop.utils.async.Async;
 import lombok.val;
@@ -19,9 +20,19 @@ public class UsersTable {
     }
 
     public void createTable() {
-        try (val preparedStatement = dataSource.getConnection().prepareStatement(String.format("CREATE TABLE IF NOT EXISTS `%s` (" +
-                "`uniqueId` VARCHAR(36) NOT NULL," +
-                "`enabled` BOOLEAN NOT NULL)", TABLE_NAME))) {
+        String createTableSql;
+
+        if (dataSource instanceof SQLite) {
+            createTableSql = String.format("CREATE TABLE IF NOT EXISTS `%s` (" +
+                    "`uniqueId` TEXT NOT NULL," +
+                    "`enabled` INTEGER NOT NULL)", TABLE_NAME);
+        } else {
+            createTableSql = String.format("CREATE TABLE IF NOT EXISTS `%s` (" +
+                    "`uniqueId` VARCHAR(36) NOT NULL," +
+                    "`enabled` BOOLEAN NOT NULL)", TABLE_NAME);
+        }
+
+        try (val preparedStatement = dataSource.getConnection().prepareStatement(createTableSql)) {
             preparedStatement.executeUpdate();
         } catch (SQLException exception) {
             exception.printStackTrace();
@@ -33,7 +44,12 @@ public class UsersTable {
             try (val preparedStatement = dataSource.getConnection().prepareStatement(String.format("INSERT INTO `%s` " +
                     "(`uniqueId`, `enabled`) VALUES (?, ?)", TABLE_NAME))) {
                 preparedStatement.setString(1, user.getUniqueId().toString());
-                preparedStatement.setBoolean(2, user.isEnabled());
+
+                if (dataSource instanceof SQLite) {
+                    preparedStatement.setInt(2, user.isEnabled() ? 1 : 0);
+                } else {
+                    preparedStatement.setBoolean(2, user.isEnabled());
+                }
 
                 preparedStatement.executeUpdate();
             } catch (SQLException exception) {
@@ -46,7 +62,13 @@ public class UsersTable {
         Async.run(() -> {
             try (val preparedStatement = dataSource.getConnection().prepareStatement(String.format("UPDATE `%s` " +
                     " SET `enabled` = ? WHERE `uniqueId` = ?", TABLE_NAME))) {
-                preparedStatement.setBoolean(1, user.isEnabled());
+
+                if (dataSource instanceof SQLite) {
+                    preparedStatement.setInt(1, user.isEnabled() ? 1 : 0);
+                } else {
+                    preparedStatement.setBoolean(1, user.isEnabled());
+                }
+
                 preparedStatement.setString(2, user.getUniqueId().toString());
                 preparedStatement.executeUpdate();
             } catch (SQLException exception) {
@@ -62,11 +84,19 @@ public class UsersTable {
             preparedStatement.setString(1, uuid.toString());
 
             try (val resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next())
+                if (resultSet.next()) {
+                    boolean enabled;
+                    if (dataSource instanceof SQLite) {
+                        enabled = resultSet.getInt("enabled") != 0;
+                    } else {
+                        enabled = resultSet.getBoolean("enabled");
+                    }
+
                     return new User(
                             UUID.fromString(resultSet.getString("uniqueId")),
-                            resultSet.getBoolean("enabled")
+                            enabled
                     );
+                }
 
             }
 

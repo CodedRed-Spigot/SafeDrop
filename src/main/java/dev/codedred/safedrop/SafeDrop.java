@@ -6,9 +6,12 @@ import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
 import lombok.Getter;
+
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public final class SafeDrop extends JavaPlugin {
@@ -26,6 +29,14 @@ public final class SafeDrop extends JavaPlugin {
         registerListeners();
 
         this.loadDatabase();
+
+        Collection<? extends Player> onlinePlayers = getServer().getOnlinePlayers();
+        if (!onlinePlayers.isEmpty()) {
+            for (Player p : onlinePlayers) {
+                PlayerJoinQuit.initalizePlayerDropStatus(p, this);
+            }
+        }
+
     }
 
     public void loadDatabase() {
@@ -61,7 +72,6 @@ public final class SafeDrop extends JavaPlugin {
         pm.registerEvents(new PlayerDropItem(), this);
         pm.registerEvents(new PlayerJoinQuit(this), this);
     }
-
 
     private void checkForUpdate() {
         getServer().getScheduler().runTaskAsynchronously(this, () -> {

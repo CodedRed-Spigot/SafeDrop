@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public class MySQL implements DataSource {
 
-
     private Connection connection;
 
     public MySQL(SafeDrop plugin) {

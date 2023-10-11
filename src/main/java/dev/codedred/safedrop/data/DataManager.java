@@ -1,6 +1,5 @@
 package dev.codedred.safedrop.data;
 
-import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dev.codedred.safedrop.SafeDrop;
@@ -81,23 +80,23 @@ public class DataManager {
 			modified = true;
 		}
 		if (!cfg.contains("messages.drop-text-message")) {
-			cfg.set("messages.drop-text-message", "&9Confirm drop by dropping item again!");
+			cfg.set("messages.drop-text-message", "&3&lConfirm drop &r&9by dropping item again!");
 			modified = true;
 		}
 		if (!cfg.contains("messages.drop-actionbar-message")) {
-			cfg.set("messages.drop-actionbar-message", "&9Confirm drop by dropping item again!");
+			cfg.set("messages.drop-actionbar-message", "&3&lConfirm drop &r&9by dropping item again!");
 			modified = true;
 		}
 		if (!cfg.contains("messages.safedrop-off")) {
-			cfg.set("messages.safedrop-off", "&cSafeDrop has been disabled!");
+			cfg.set("messages.safedrop-off", "&c&lSafeDrop has been disabled!");
 			modified = true;
 		}
 		if (!cfg.contains("messages.safedrop-on")) {
-			cfg.set("messages.safedrop-on", "&aSafeDrop has been enabled!");
+			cfg.set("messages.safedrop-on", "&a&lSafeDrop has been enabled!");
 			modified = true;
 		}
 		if (!cfg.contains("messages.usage")) {
-			List<String> usage = Arrays.asList("&9&lTry,", "&9/&8Safedrop &7- Turns on/off safedrop");
+			List<String> usage = Arrays.asList("&9&lTry,", "&9/&8Safedrop &7- &oTurns on/off safedrop");
 			cfg.set("messages.usage", usage);
 			modified = true;
 		}

@@ -43,7 +43,8 @@ public class PlayerDropItem implements Listener {
 		}
 
 		if (dataManager.getConfig().getBoolean("safe-drop.actionbar-message.enabled")) {
-			TextComponent message = new TextComponent(ChatUtils.format(dataManager.getConfig().getString("messages.drop-actionbar-message")));
+			TextComponent message = new TextComponent(
+					ChatUtils.format(dataManager.getConfig().getString("messages.drop-actionbar-message")));
 			player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
 		}
 	}

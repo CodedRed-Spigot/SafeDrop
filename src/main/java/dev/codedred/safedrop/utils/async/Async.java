@@ -2,7 +2,6 @@ package dev.codedred.safedrop.utils.async;
 
 import lombok.Getter;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ForkJoinPool;

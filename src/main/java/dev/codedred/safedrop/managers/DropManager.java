@@ -63,6 +63,7 @@ public class DropManager {
 					removeRequest(uuid);
 				cancel();
 			}
-		}.runTaskLaterAsynchronously(JavaPlugin.getPlugin(SafeDrop.class),dataManager.getConfig().getLong("safe-drop.seconds") * 20L - 15L);
+		}.runTaskLaterAsynchronously(JavaPlugin.getPlugin(SafeDrop.class),
+				dataManager.getConfig().getLong("safe-drop.seconds") * 20L - 15L);
 	}
 }

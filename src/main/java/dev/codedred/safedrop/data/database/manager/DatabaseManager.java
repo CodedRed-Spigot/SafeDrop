@@ -7,8 +7,6 @@ import dev.codedred.safedrop.data.database.datasource.DataSource;
 import dev.codedred.safedrop.data.database.datasource.impl.MySQL;
 import lombok.Getter;
 
-import java.sql.SQLException;
-
 @Getter
 public class DatabaseManager {
 

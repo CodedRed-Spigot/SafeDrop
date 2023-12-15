@@ -87,50 +87,46 @@ public final class SafeDrop extends JavaPlugin {
     ConfigurationSection whitelistSettings = dataManager
       .getWhitelist()
       .getConfigurationSection("whitelist-settings");
-    if (whitelistSettings != null && whitelistSettings.getBoolean("enabled")) {
-      dropManager.setWhitelist(true);
+    dropManager.setWhitelist(true);
 
-      Bukkit
-        .getScheduler()
-        .runTaskAsynchronously(
-          SafeDrop.getPlugin(SafeDrop.class),
-          () -> {
-            Set<String> whitelist = new HashSet<>();
+    Bukkit
+      .getScheduler()
+      .runTaskAsynchronously(
+        SafeDrop.getPlugin(SafeDrop.class),
+        () -> {
+          Set<String> whitelist = new HashSet<>();
 
-            ConfigurationSection whitelistSection = dataManager
-              .getWhitelist()
-              .getConfigurationSection("whitelist");
-            if (whitelistSection != null) {
-              Set<String> keys = whitelistSection.getKeys(false);
-              for (String item : keys) {
-                if (whitelistSection.getBoolean(item)) {
-                  whitelist.add(item);
-                }
+          ConfigurationSection whitelistSection = dataManager
+            .getWhitelist()
+            .getConfigurationSection("whitelist");
+          if (whitelistSection != null) {
+            Set<String> keys = whitelistSection.getKeys(false);
+            for (String item : keys) {
+              if (whitelistSection.getBoolean(item)) {
+                whitelist.add(item);
               }
             }
-
-            if (whitelistSettings.getBoolean("whitelist-all.tools")) {
-              whitelist.addAll(Items.getAllTools());
-            }
-            if (whitelistSettings.getBoolean("whitelist-all.spawn-eggs")) {
-              whitelist.addAll(Items.getAllSpawnEggs());
-            }
-            if (whitelistSettings.getBoolean("whitelist-all.armor")) {
-              whitelist.addAll(Items.getAllArmor());
-            }
-            if (whitelistSettings.getBoolean("whitelist-all.enchanted-items")) {
-              dropManager.setEnchantedItemsWhitelist(true);
-            }
-
-            dropManager.setWhitelist(new ArrayList<>(whitelist));
-            Bukkit
-              .getLogger()
-              .info("[SafeDrop] Successfully loaded item whitelist.");
           }
-        );
-    } else {
-      Bukkit.getLogger().info("[SafeDrop] Whitelist is disabled.");
-    }
+
+          if (whitelistSettings.getBoolean("whitelist-all.tools")) {
+            whitelist.addAll(Items.getAllTools());
+          }
+          if (whitelistSettings.getBoolean("whitelist-all.spawn-eggs")) {
+            whitelist.addAll(Items.getAllSpawnEggs());
+          }
+          if (whitelistSettings.getBoolean("whitelist-all.armor")) {
+            whitelist.addAll(Items.getAllArmor());
+          }
+          if (whitelistSettings.getBoolean("whitelist-all.enchanted-items")) {
+            dropManager.setEnchantedItemsWhitelist(true);
+          }
+
+          dropManager.setWhitelist(new ArrayList<>(whitelist));
+          Bukkit
+            .getLogger()
+            .info("[SafeDrop] Successfully loaded item whitelist.");
+        }
+      );
   }
 
   @Override

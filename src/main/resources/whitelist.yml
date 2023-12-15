@@ -1,15 +1,14 @@
 whitelist-settings:
-  enabled: true
+  enabled: false
   # Enable or disable specific categories of items in the whitelist. 
   # This is a convenient way to manage large groups of items, such as all tools or blocks.
   # Set to 'true' to automatically include all items in the respective category in the whitelist. 
   # Make sure to reload config after changing these values for it to take effect.
   whitelist-all:
-    all-tools: false           # Include all types of tools in the whitelist when set to true
-    all-blocks: false          # Include all types of blocks in the whitelist when set to true
-    all-spawn-eggs: false      # Include all types of spawn eggs in the whitelist when set to true
-    all-armor: false           # Include all types of armor in the whitelist when set to true
-    enchanted-items: false     # If an item is enchanted it will be whitelisted
+    tools: false                # Include all types of tools in the whitelist when set to true
+    armor: false                # Include all types of armor in the whitelist when set to true
+    spawn-eggs: false           # Include all types of spawn eggs in the whitelist when set to true
+    enchanted-items: false      # If an item is enchanted it will be whitelisted
 
 # Default Whitelist Settings:
 # The following items are automatically whitelisted: Diamond/Netherite tools and special blocks/items.

@@ -31,8 +31,13 @@ public class PlayerDropItem implements Listener {
     if (dropManager.isWhitelistEnabled() && dropManager.getStatus(uuid)) {
       ItemStack itemInHand = event.getItemDrop().getItemStack();
       String itemName = itemInHand.getType().name();
+      boolean isEnchantedItemsWhitelisted = dropManager.isEnchantedItemsWhitelisted();
+      boolean itemEnchanted = !itemInHand.getEnchantments().isEmpty();
 
-      if (dropManager.isWhitelisted(itemName)) {
+      if (
+        dropManager.isWhitelisted(itemName) ||
+        (isEnchantedItemsWhitelisted && itemEnchanted)
+      ) {
         event.setCancelled(true);
         handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
       }

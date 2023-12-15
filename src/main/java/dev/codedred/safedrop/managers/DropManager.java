@@ -17,6 +17,7 @@ public class DropManager {
   private final Map<UUID, Boolean> dropMap;
   private final List<UUID> requestList;
 
+  private boolean whitelistEnchantedItems;
   private boolean whitelistEnabled;
   private List<String> whitelist;
 
@@ -30,6 +31,7 @@ public class DropManager {
     requestList = new CopyOnWriteArrayList<>();
     whitelist = new CopyOnWriteArrayList<>();
     whitelistEnabled = false;
+    whitelistEnchantedItems = false;
   }
 
   public void addRequest(UUID uuid) {
@@ -69,12 +71,20 @@ public class DropManager {
     return whitelist.contains(item.toUpperCase());
   }
 
-  public void setWhitelistEnabled(boolean whitelistEnabled) {
-    this.whitelistEnabled = whitelistEnabled;
+  public void setWhitelist(boolean whitelist) {
+    this.whitelistEnabled = whitelist;
   }
 
   public boolean isWhitelistEnabled() {
     return whitelistEnabled;
+  }
+
+  public void setEnchantedItemsWhitelist(boolean whitelist) {
+    this.whitelistEnchantedItems = whitelist;
+  }
+
+  public boolean isEnchantedItemsWhitelisted() {
+    return whitelistEnchantedItems;
   }
 
   private void startRequestDelay(UUID uuid) {

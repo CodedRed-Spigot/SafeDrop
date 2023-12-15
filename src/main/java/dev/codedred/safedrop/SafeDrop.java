@@ -6,9 +6,10 @@ import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
 import dev.codedred.safedrop.managers.DropManager;
+import dev.codedred.safedrop.utils.Items;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
@@ -82,31 +83,54 @@ public final class SafeDrop extends JavaPlugin {
   public static void loadWhitelist() {
     DataManager dataManager = DataManager.getInstance();
     DropManager dropManager = DropManager.getInstance();
-    dropManager.setWhitelistEnabled(true);
 
-    Bukkit
-      .getScheduler()
-      .runTaskAsynchronously(
-        SafeDrop.getPlugin(SafeDrop.class),
-        () -> {
-          List<String> whitelist = new ArrayList<>();
-          ConfigurationSection whitelistSection = dataManager
-            .getWhitelist()
-            .getConfigurationSection("whitelist");
-          if (whitelistSection != null) {
-            Set<String> keys = whitelistSection.getKeys(false);
-            for (String item : keys) {
-              if (whitelistSection.getBoolean(item)) {
-                whitelist.add(item);
+    ConfigurationSection whitelistSettings = dataManager
+      .getWhitelist()
+      .getConfigurationSection("whitelist-settings");
+    if (whitelistSettings != null && whitelistSettings.getBoolean("enabled")) {
+      dropManager.setWhitelist(true);
+
+      Bukkit
+        .getScheduler()
+        .runTaskAsynchronously(
+          SafeDrop.getPlugin(SafeDrop.class),
+          () -> {
+            Set<String> whitelist = new HashSet<>();
+
+            ConfigurationSection whitelistSection = dataManager
+              .getWhitelist()
+              .getConfigurationSection("whitelist");
+            if (whitelistSection != null) {
+              Set<String> keys = whitelistSection.getKeys(false);
+              for (String item : keys) {
+                if (whitelistSection.getBoolean(item)) {
+                  whitelist.add(item);
+                }
               }
             }
+
+            if (whitelistSettings.getBoolean("whitelist-all.tools")) {
+              whitelist.addAll(Items.getAllTools());
+            }
+            if (whitelistSettings.getBoolean("whitelist-all.spawn-eggs")) {
+              whitelist.addAll(Items.getAllSpawnEggs());
+            }
+            if (whitelistSettings.getBoolean("whitelist-all.armor")) {
+              whitelist.addAll(Items.getAllArmor());
+            }
+            if (whitelistSettings.getBoolean("whitelist-all.enchanted-items")) {
+              dropManager.setEnchantedItemsWhitelist(true);
+            }
+
+            dropManager.setWhitelist(new ArrayList<>(whitelist));
+            Bukkit
+              .getLogger()
+              .info("[SafeDrop] Successfully loaded item whitelist.");
           }
-          dropManager.setWhitelist(whitelist);
-          Bukkit
-            .getLogger()
-            .info("[SafeDrop] Successfully loaded item whitelist.");
-        }
-      );
+        );
+    } else {
+      Bukkit.getLogger().info("[SafeDrop] Whitelist is disabled.");
+    }
   }
 
   @Override

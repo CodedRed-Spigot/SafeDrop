@@ -149,7 +149,7 @@ public class DataManager {
       getWhitelist().getBoolean("whitelist-settings.enabled")
     ) SafeDrop.loadWhitelist(); else DropManager
       .getInstance()
-      .setWhitelistEnabled(false);
+      .setWhitelist(false);
   }
 
   public void saveConfig() {

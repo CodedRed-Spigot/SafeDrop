@@ -1,6 +1,7 @@
 package dev.codedred.safedrop.data;
 
 import dev.codedred.safedrop.SafeDrop;
+import dev.codedred.safedrop.managers.DropManager;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,10 +12,13 @@ public class DataManager {
   private static DataManager instance = null;
   private final CustomFile config;
   private final CustomFile saves;
+  private final CustomFile whitelist;
 
   private DataManager() {
     config = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "config.yml");
     saves = new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "saves.yml");
+    whitelist =
+      new CustomFile(JavaPlugin.getPlugin(SafeDrop.class), "whitelist.yml");
   }
 
   public static DataManager getInstance() {
@@ -129,9 +133,23 @@ public class DataManager {
     return saves.getConfig();
   }
 
+  public FileConfiguration getWhitelist() {
+    return whitelist.getConfig();
+  }
+
   public void reload() {
     config.reloadConfig();
     saves.reloadConfig();
+    reloadWhitelist();
+  }
+
+  public void reloadWhitelist() {
+    whitelist.reloadConfig();
+    if (
+      getWhitelist().getBoolean("whitelist-settings.enabled")
+    ) SafeDrop.loadWhitelist(); else DropManager
+      .getInstance()
+      .setWhitelistEnabled(false);
   }
 
   public void saveConfig() {
@@ -140,5 +158,9 @@ public class DataManager {
 
   public void saveSaves() {
     saves.saveConfig();
+  }
+
+  public void saveWhitelist() {
+    whitelist.saveConfig();
   }
 }

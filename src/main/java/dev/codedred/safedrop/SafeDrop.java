@@ -5,9 +5,15 @@ import dev.codedred.safedrop.data.DataManager;
 import dev.codedred.safedrop.data.database.manager.DatabaseManager;
 import dev.codedred.safedrop.listeners.PlayerDropItem;
 import dev.codedred.safedrop.listeners.PlayerJoinQuit;
+import dev.codedred.safedrop.managers.DropManager;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +39,15 @@ public final class SafeDrop extends JavaPlugin {
       for (Player p : onlinePlayers) {
         PlayerJoinQuit.initalizePlayerDropStatus(p, this);
       }
+    }
+    if (
+      DataManager
+        .getInstance()
+        .getWhitelist()
+        .getBoolean("whitelist-settings.enabled")
+    ) {
+      getLogger().warning("Loading whitelist...");
+      loadWhitelist();
     }
   }
 
@@ -62,6 +77,36 @@ public final class SafeDrop extends JavaPlugin {
       }
       this.databaseManager.load();
     }
+  }
+
+  public static void loadWhitelist() {
+    DataManager dataManager = DataManager.getInstance();
+    DropManager dropManager = DropManager.getInstance();
+    dropManager.setWhitelistEnabled(true);
+
+    Bukkit
+      .getScheduler()
+      .runTaskAsynchronously(
+        SafeDrop.getPlugin(SafeDrop.class),
+        () -> {
+          List<String> whitelist = new ArrayList<>();
+          ConfigurationSection whitelistSection = dataManager
+            .getWhitelist()
+            .getConfigurationSection("whitelist");
+          if (whitelistSection != null) {
+            Set<String> keys = whitelistSection.getKeys(false);
+            for (String item : keys) {
+              if (whitelistSection.getBoolean(item)) {
+                whitelist.add(item);
+              }
+            }
+          }
+          dropManager.setWhitelist(whitelist);
+          Bukkit
+            .getLogger()
+            .info("[SafeDrop] Successfully loaded item whitelist.");
+        }
+      );
   }
 
   @Override

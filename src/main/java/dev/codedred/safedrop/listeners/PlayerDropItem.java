@@ -6,15 +6,18 @@ import dev.codedred.safedrop.utils.chat.ChatUtils;
 import java.util.UUID;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerDropItem implements Listener {
 
   @EventHandler
   public void onItemDrop(PlayerDropItemEvent event) {
+    if (event.getPlayer().getGameMode() == GameMode.CREATIVE) return;
     if (!event.getPlayer().hasPermission("sd.use")) return;
 
     if (event.getPlayer().getInventory().firstEmpty() == -1) return;
@@ -25,7 +28,15 @@ public class PlayerDropItem implements Listener {
 
     if (dropManager.hasRequested(uuid)) return;
 
-    if (dropManager.getStatus(uuid)) {
+    if (dropManager.isWhitelistEnabled() && dropManager.getStatus(uuid)) {
+      ItemStack itemInHand = event.getItemDrop().getItemStack();
+      String itemName = itemInHand.getType().name();
+
+      if (dropManager.isWhitelisted(itemName)) {
+        event.setCancelled(true);
+        handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
+      }
+    } else if (dropManager.getStatus(uuid)) {
       event.setCancelled(true);
       handlePlayerDrop(event.getPlayer(), uuid, dataManager, dropManager);
     }
